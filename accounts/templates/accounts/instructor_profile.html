@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container pt-8 pt-md-11">
+  <div class="row">
+    <div class="col-xl-8 mx-xl-auto">
+      <div
+        class="d-flex flex-wrap align-items-center justify-content-center mb-5 mb-md-3"
+      >
+        <!-- Social -->
+        <ul
+          class="list-unstyled list-inline list-social mb-4 mb-md-0 mx-lg-4 order-1 order-md-0 font-size-sm"
+        >
+          {% if instructor.website_link %}
+          <li class="list-inline-item list-social-item">
+            <a
+              href="#"
+              class="text-secondary w-36 h-36 shadow-dark-hover d-flex align-items-center justify-content-center rounded-circle border-hover"
+            >
+              <i class="fa fa-globe fa-2xl"></i>
+            </a>
+          </li>
+          {% endif %} {% if instructor.twitter_url %}
+          <li class="list-inline-item list-social-item">
+            <a
+              href="#"
+              class="text-secondary w-36 h-36 shadow-dark-hover d-flex align-items-center justify-content-center rounded-circle border-hover"
+            >
+              <i class="fab fa-twitter fa-2xl"></i>
+            </a>
+          </li>
+          {% endif %} {% if instructor.facebook_url %}
+          <li class="list-inline-item list-social-item">
+            <a
+              href="#"
+              class="text-secondary w-36 h-36 shadow-dark-hover d-flex align-items-center justify-content-center rounded-circle border-hover"
+            >
+              <i class="fab fa-facebook-f fa-2xl"></i>
+            </a>
+          </li>
+          {% endif %} {% if instructor.linkedin_url %}
+          <li class="list-inline-item list-social-item">
+            <a
+              href="#"
+              class="text-secondary w-36 h-36 shadow-dark-hover d-flex align-items-center justify-content-center rounded-circle border-hover"
+            >
+              <i class="fab fa-linkedin-in fa-2xl"></i>
+            </a>
+          </li>
+          {% endif %} {% if instructor.youtube_url %}
+          <li class="list-inline-item list-social-item">
+            <a
+              href="#"
+              class="text-secondary w-36 h-36 shadow-dark-hover d-flex align-items-center justify-content-center rounded-circle border-hover"
+            >
+              <i class="fab fa-youtube fa-2xl"></i>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+
+        <div
+          class="border rounded-circle d-inline-block mb-4 mb-md-0 mx-lg-4 order-0"
+        >
+          <div class="p-4">
+            <img
+              src="{{ instructor.profile.url }}"
+              alt="..."
+              class="rounded-circle img-fluid"
+              width="170"
+              height="170"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-7">INSTRUCTOR</div>
+      <h1 class="text-center mb-1">{{ instructor.get_full_name }}</h1>
+      <h5 class="text-center mb-7">{{ instructor.headline }}</h5>
+
+      <div class="row mb-7 justify-content-center align-items-center">
+        <div class="col-12 col-md-auto mb-3 mb-md-0">
+          <div class="d-flex align-items-center">533 Reviews</div>
+        </div>
+
+        <div class="col-12 col-md-auto mb-3 mb-md-0">
+          <div class="d-flex align-items-center">533 Students</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <!-- COURSE INFO TAB ======================= -->
+
+      <h3 class="">About Me</h3>
+      {% if instructor.about %}
+      <p class="mb-6 line-height-md">{{ instructor.about }}</p>
+      {% else %}
+      <p class="mb-6 line-height-md">Write about yourself.</p>
+      {% endif %}
+
+      <!-- COURSE LIST ========================= -->
+      <h3 class="">My Courses ({{ instructor.courses.count }})</h3>
+      <div class="container pb-4 pb-xl-7">
+        <div class="row row-cols-md-2 row-cols-xl-3 mb-6 mb-xl-3">
+          {% for course in instructor.courses.all %}
+          <div class="col-md pb-4 pb-md-7">
+            <!-- Card -->
+            <div class="card border shadow p-2 lift sk-fade">
+              <!-- Image -->
+              <div class="card position-relative">
+                <a
+                  href="{{ course.get_absolute_url }}"
+                  class="card-img sk-thumbnail d-block"
+                >
+                  <img
+                    class="rounded shadow-light-lg"
+                    src="{{ course.featured_image.url }}"
+                    alt="..."
+                  />
+                </a>
+              </div>
+
+              <!-- Footer -->
+              <div class="card-footer px-2 pb-2 mb-1 pt-4 position-relative">
+
+                <!-- Heading -->
+                <div class="position-relative">
+                  <a href="{{ course.get_absolute_url }}" class="d-block stretched-link"
+                    ><h4
+                      class="line-clamp-2 me-md-6 me-lg-10 me-xl-4 mb-2"
+                    >
+                      {{ course.title }}
+                    </h4>
+                  </a>
+
+                  <span class="mb-1 d-inline-block text-gray-800"
+                  >{{ course.instructor.get_full_name }}
+                </span>
+
+                  <div class="d-lg-flex align-items-end flex-wrap mb-n1">
+                    <div class="star-rating mb-2 mb-lg-0 me-lg-3">
+                      <div class="rating" style="width: 50%"></div>
+                    </div>
+
+                    <div class="font-size-sm">
+                      <span>5.45 (5.8k+ reviews)</span>
+                    </div>
+                  </div>
+
+                  <div class="row mx-n2 align-items-end">
+                    <div class="col px-2">
+                      <ul class="nav mx-n3">
+                        <li class="nav-item px-3">
+                          <div class="d-flex align-items-center">
+                            <div class="font-size-sm">5 lessons</div>
+                          </div>
+                        </li>
+                        <li class="nav-item px-3">
+                          <div class="d-flex align-items-center">
+                            <div class="font-size-sm">8h 12m</div>
+                          </div>
+                        </li>
+                        <li class="nav-item px-3">
+                          <div class="d-flex align-items-center">
+                            <div class="font-size-sm">{{ course.level }}</div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {% if course.is_free %}
+                    <div class="col-auto px-2 text-right">
+                      <span
+                        class="badge badge-lg badge-danger bottom-0 left-0"
+                      >
+                        <span
+                          class="text-white text-uppercase fw-bold font-size-xs"
+                          >FREE
+                        </span>
+                      </span>
+                    </div>
+                    {% else %}
+                    {% if course.has_discount %}
+                      <div class="col-auto px-2 text-right">
+                        <del class="font-size-sm">${{ course.regular_price }}</del>
+                        <ins class="h4 mb-0 d-block mb-lg-n1">${{course.discount_price }}</ins>
+                      </div>
+                      {% else %}
+                      <div class="col-auto px-2 text-right">
+                        <ins class="h4 mb-0 d-block mb-lg-n1">
+                          ${{ course.regular_price }}
+                        </ins>
+                      </div>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

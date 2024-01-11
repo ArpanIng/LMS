@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Log In{% endblock title %}
+
+{% block content %}
+<div class="container mt-11 mb-11">
+  <div class="row gx-0">
+    <div class="col-md-7 col-xl-4 mx-auto">
+      {% include 'partials/messages.html' %}
+      <!-- Login -->
+      <h3 class="mb-6">Log In to Your Skola Account!</h3>
+
+      <!-- Form Login -->
+      <form action="" method="post" class="mb-5" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form__group mb-5">
+          <!-- form validation messages -->
+          {% if field.errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in field.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
+          <label>{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% endfor %}
+        
+        <div class="d-flex align-items-center mb-5 font-size-sm">
+          <div class="ms-auto">
+            <a class="text-gray-800" href="{% url 'accounts:password_reset' %}">Forgot Password</a>
+          </div>
+        </div>
+
+        <button class="btn btn-block btn-primary" type="submit">LOGIN</button>
+      </form>
+
+      <p class="mb-0 font-size-sm text-center">
+        Don't have an account?
+        <a class="text-underline" href="{% url 'accounts:register' %}">Sign up</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock content %}

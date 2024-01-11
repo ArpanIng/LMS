@@ -1,0 +1,555 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Page Title =========== -->
+<header class="py-8 py-md-8" style="background-image: none">
+  <div class="container py-xl-2">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-scroll justify-content">
+        {% for parent_category in parent_categories %}
+          <li class="breadcrumb-item">
+            <a
+              class="text-gray-800-active"
+              href="{{ parent_category.get_category_url }}"
+            >
+              {{ parent_category.title|title }}
+            </a>
+          </li>
+          {% if parent_category.children.exists %}
+            {% for sub_category in parent_category.children.all %}
+            <li class="breadcrumb-item">
+              <a
+                class="text-gray-800"
+                href="{{ sub_category.get_subcategory_url }}"
+              >
+                {{ sub_category.title|title }}
+              </a>
+            </li>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </ol>
+    </nav>
+    <h1 class="display-4 fw-semi-bold mb-0">{{ title|title }} Courses</h1>
+  </div>
+</header>
+
+<!-- CONTROL BAR ============= -->
+<div class="container mb-6 mb-xl-8 z-index-2">
+  <div class="d-lg-flex align-items-center mb-6 mb-xl-0">
+    <p class="mb-lg-0">
+      We found
+      <span class="text-dark">
+        {{ course_count_by_category }} course{{ course_count_by_category|pluralize }}
+      </span>
+      available for you
+    </p>
+    <div class="ms-lg-auto d-lg-flex flex-wrap">
+      <div class="mb-4 mb-lg-0 ms-lg-6">
+        <div
+          class="border rounded d-flex align-items-center bg-white shadow choices-label h-50p"
+        >
+          <span class="ps-5">Sort by:</span>
+          <select
+            class="form-select form-select-sm text-dark border-0 ps-1 bg-transparent flex-grow-1 shadow-none dropdown-menu-end"
+            data-choices
+          >
+            <option>Default</option>
+            <option>New Courses</option>
+            <option>Price Low to High</option>
+            <option>Price High to low</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE =============== -->
+<div class="container">
+  <div class="row">
+    <div class="col-xl-4 mb-5 mb-xl-0">
+      <!-- SIDEBAR FILTER =========== -->
+      <div class="vertical-scroll" id="courseSidebar">
+        <!-- SUBCATEGORY FILTER =========== -->
+        <div class="border rounded mb-6 bg-white">
+          <!-- Heading -->
+          <div id="coursefilter1">
+            <h4 class="mb-0">
+              <button
+                class="p-6 text-dark fw-medium d-flex align-items-center collapse-accordion-toggle line-height-one"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#coursefiltercollapse1"
+                aria-expanded="true"
+                aria-controls="coursefiltercollapse1"
+              >
+                Subcategory
+                <span class="ms-auto text-dark d-flex">
+                  <!-- Icon -->
+                  <svg
+                    width="15"
+                    height="2"
+                    viewBox="0 0 15 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect width="15" height="2" fill="currentColor" />
+                  </svg>
+
+                  <svg
+                    width="15"
+                    height="16"
+                    viewBox="0 0 15 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M0 7H15V9H0V7Z" fill="currentColor" />
+                    <path
+                      d="M6 16L6 8.74228e-08L8 0L8 16H6Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </h4>
+          </div>
+
+          <div
+            id="coursefiltercollapse1"
+            class="collapse show mt-n2 px-6 pb-6"
+            aria-labelledby="coursefilter1"
+            data-parent="#courseSidebar"
+          >
+            {% for parent_category in parent_categories %}
+              {% if parent_category.children.exists %}
+              <ul class="list-unstyled list-group list-checkbox">
+                {% for sub_category in parent_category.children.all %}
+                <li class="custom-control custom-checkbox">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="category-{{ sub_category.id }}"
+                  />
+                  <label
+                    class="custom-control-label font-size-base"
+                    for="category-{{ sub_category.id }}"
+                    >{{ sub_category.title|title }} ({{ sub_category.subcategory_courses.count }})
+                  </label>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <p>No subcategories available.</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- PRICE FILTER =========== -->
+        <div class="border rounded mb-6 bg-white">
+          <!-- Heading -->
+          <div id="coursefilter3">
+            <h4 class="mb-0">
+              <button
+                class="p-6 text-dark fw-medium d-flex align-items-center collapse-accordion-toggle line-height-one"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#coursefiltercollapse3"
+                aria-expanded="true"
+                aria-controls="coursefiltercollapse3"
+              >
+                Price
+                <span class="ms-auto text-dark d-flex">
+                  <!-- Icon -->
+                  <svg
+                    width="15"
+                    height="2"
+                    viewBox="0 0 15 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect width="15" height="2" fill="currentColor" />
+                  </svg>
+
+                  <svg
+                    width="15"
+                    height="16"
+                    viewBox="0 0 15 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M0 7H15V9H0V7Z" fill="currentColor" />
+                    <path
+                      d="M6 16L6 8.74228e-08L8 0L8 16H6Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </h4>
+          </div>
+
+          <div
+            id="coursefiltercollapse3"
+            class="collapse show mt-n2 px-6 pb-6"
+            aria-labelledby="coursefilter3"
+            data-parent="#courseSidebar"
+          >
+            <ul class="list-unstyled list-group list-checkbox">
+              <li class="custom-control custom-radio">
+                <input
+                  type="radio"
+                  id="pricecustomradio1"
+                  name="customRadio"
+                  class="custom-control-input"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="pricecustomradio1"
+                  >All (18)</label
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- LEVEL FILTER =========== -->
+        <div class="border rounded mb-6 bg-white">
+          <!-- Heading -->
+          <div id="coursefilter4">
+            <h4 class="mb-0">
+              <button
+                class="p-6 text-dark fw-medium d-flex align-items-center collapse-accordion-toggle line-height-one"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#coursefiltercollapse4"
+                aria-expanded="true"
+                aria-controls="coursefiltercollapse4"
+              >
+                Level
+                <span class="ms-auto text-dark d-flex">
+                  <!-- Icon -->
+                  <svg
+                    width="15"
+                    height="2"
+                    viewBox="0 0 15 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect width="15" height="2" fill="currentColor" />
+                  </svg>
+
+                  <svg
+                    width="15"
+                    height="16"
+                    viewBox="0 0 15 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M0 7H15V9H0V7Z" fill="currentColor" />
+                    <path
+                      d="M6 16L6 8.74228e-08L8 0L8 16H6Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </h4>
+          </div>
+
+          <div
+            id="coursefiltercollapse4"
+            class="collapse show mt-n2 px-6 pb-6"
+            aria-labelledby="coursefilter4"
+            data-parent="#courseSidebar"
+          >
+            <ul class="list-unstyled list-group list-checkbox">
+              {% for level in course_levels %}
+              <li class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="level-{{ level.id }}"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="level-{{ level.id }}"
+                  >{{ level.title|title }} ({{ level.course_set.all.count }})
+                </label>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <!-- RATING FILTER =========== -->
+        <div class="border rounded mb-6 bg-white">
+          <!-- Heading -->
+          <div id="coursefilter5">
+            <h4 class="mb-0">
+              <button
+                class="p-6 text-dark fw-medium d-flex align-items-center collapse-accordion-toggle line-height-one"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#coursefiltercollapse5"
+                aria-expanded="true"
+                aria-controls="coursefiltercollapse5"
+              >
+                Rating
+                <span class="ms-auto text-dark d-flex">
+                  <!-- Icon -->
+                  <svg
+                    width="15"
+                    height="2"
+                    viewBox="0 0 15 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect width="15" height="2" fill="currentColor" />
+                  </svg>
+
+                  <svg
+                    width="15"
+                    height="16"
+                    viewBox="0 0 15 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M0 7H15V9H0V7Z" fill="currentColor" />
+                    <path
+                      d="M6 16L6 8.74228e-08L8 0L8 16H6Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </h4>
+          </div>
+
+          <div
+            id="coursefiltercollapse5"
+            class="collapse show mt-n2 px-6 pb-6"
+            aria-labelledby="coursefilter5"
+            data-parent="#courseSidebar"
+          >
+            <ul class="list-unstyled list-group list-checkbox">
+              <li class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="ratingcustomcheck1"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="ratingcustomcheck1"
+                >
+                  <span class="d-flex align-items-end">
+                    <span class="star-rating">
+                      <span class="rating" style="width: 90%"></span>
+                    </span>
+
+                    <span class="ms-3">
+                      <span>& up</span>
+                    </span>
+                  </span>
+                </label>
+              </li>
+              <li class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="ratingcustomcheck2"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="ratingcustomcheck2"
+                >
+                  <span class="d-flex align-items-end">
+                    <span class="star-rating">
+                      <span class="rating" style="width: 70%"></span>
+                    </span>
+
+                    <span class="ms-3">
+                      <span>& up</span>
+                    </span>
+                  </span>
+                </label>
+              </li>
+              <li class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="ratingcustomcheck3"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="ratingcustomcheck3"
+                >
+                  <span class="d-flex align-items-end">
+                    <span class="star-rating">
+                      <span class="rating" style="width: 50%"></span>
+                    </span>
+
+                    <span class="ms-3">
+                      <span>& up</span>
+                    </span>
+                  </span>
+                </label>
+              </li>
+              <li class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="ratingcustomcheck4"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="ratingcustomcheck4"
+                >
+                  <span class="d-flex align-items-end">
+                    <span class="star-rating">
+                      <span class="rating" style="width: 35%"></span>
+                    </span>
+
+                    <span class="ms-3">
+                      <span>& up</span>
+                    </span>
+                  </span>
+                </label>
+              </li>
+              <li class="custom-control custom-checkbox">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="ratingcustomcheck5"
+                />
+                <label
+                  class="custom-control-label font-size-base"
+                  for="ratingcustomcheck5"
+                >
+                  <span class="d-flex align-items-end">
+                    <span class="star-rating">
+                      <span class="rating" style="width: 10%"></span>
+                    </span>
+
+                    <span class="ms-3">
+                      <span>& up</span>
+                    </span>
+                  </span>
+                </label>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <a href="#" class="btn btn-primary btn-block mb-10">FILTER RESULTS</a>
+      </div>
+    </div>
+
+    <div class="col-xl-8">
+      {% for course in courses %}
+      <div class="border rounded-lg px-6 pt-6 bg-white">
+        <!-- Card -->
+        <div class="card sk-fade flex-md-row mb-6 align-items-center row gx-0">
+          <!-- Image -->
+          <div class="col-md-4 card-zoom position-relative">
+            <a
+              href="{{ course.get_absolute_url }}"
+              class="card-img sk-thumbnail img-ratio-2 d-block"
+            >
+              <img
+                class="rounded shadow-light-lg"
+                src="{{ course.featured_image.url }}"
+                alt="{{ course.title }}"
+              />
+            </a>
+          </div>
+
+          <div
+            class="col-md-8 card-footer px-2 px-md-5 py-4 py-md-0 position-relative"
+          >
+            <!-- Heading -->
+            <div class="position-relative">
+              <a
+                href="{{ course.get_absolute_url }}"
+                class="d-block stretched-link"
+                ><h4 class="line-clamp-2 me-md-6 me-lg-10 me-xl-4 mb-3">
+                  {{ course.title }}
+                </h4>
+              </a>
+              <p>{{ course.summary }}</p>
+              <span class="mb-1 d-inline-block text-gray-800">
+                {{ course.instructor.user }}
+              </span>
+              <ul class="nav mx-n3 mb-3">
+                <li class="nav-item px-3">
+                  <div class="d-flex align-items-center">
+                    <div class="font-size-sm">5 lessons</div>
+                  </div>
+                </li>
+                <li class="nav-item px-3">
+                  <div class="d-flex align-items-center">
+                    <div class="font-size-sm">8h 12m</div>
+                  </div>
+                </li>
+                <li class="nav-item px-3">
+                  <div class="d-flex align-items-center">
+                    <div class="font-size-sm">{{ course.level|title }}</div>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="row mx-n2 align-items-center">
+                {% if course.is_free %}
+                  <div class="col px-2">
+                    <span
+                      class="badge badge-lg badge-danger bottom-0 left-0 mt-2 mb-2 ms-2"
+                    >
+                      <span class="text-white text-uppercase fw-bold font-size-xs"
+                        >FREE
+                      </span>
+                    </span>
+                  </div>
+                {% else %}
+                  {% if course.discount_price %}
+                  <div class="col px-2">
+                    <del class="font-size-sm">${{ course.regular_price }}</del>
+                    <ins class="h4 mb-0 mb-lg-n1 ms-1"
+                      >${{ course.discount_price }}
+                    </ins>
+                  </div>
+                  {% else %}
+                  <div class="col px-2">
+                    <ins class="h4 mb-0 mb-lg-n1 ms-1"
+                      >${{ course.regular_price }}
+                    </ins>
+                  </div>
+                  {% endif %}
+                {% endif %}
+
+                <div class="col-auto px-2">
+                  <div class="d-lg-flex align-items-end flex-wrap">
+                    <div class="star-rating mb-2 mb-lg-0 me-lg-3">
+                      <div class="rating" style="width: 50%"></div>
+                    </div>
+                    <div class="font-size-sm">
+                      <span>5.45 (5.8k+ reviews)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="container mt-4 mb-4 text-center py-xl-2">
+        <h2 class="fw-semi-bold mb-0">No courses available.</h2>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

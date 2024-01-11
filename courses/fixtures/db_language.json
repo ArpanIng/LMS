@@ -1,0 +1,23 @@
+[
+    {
+        "model": "courses.language",
+        "pk": 1,
+        "fields": {
+            "name": "English"
+        }
+    },
+    {
+        "model": "courses.language",
+        "pk": 2,
+        "fields": {
+            "name": "Nepali"
+        }
+    },
+    {
+        "model": "courses.language",
+        "pk": 3,
+        "fields": {
+            "name": "French"
+        }
+    }
+]

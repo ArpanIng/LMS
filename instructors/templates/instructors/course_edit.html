@@ -1,0 +1,46 @@
+{% extends 'instructors/base_instructor.html' %}
+
+{% block content %}
+<header class="py-8 py-md-8">
+  <div class="container py-xl-2">
+    <h1 class="display-4 fw-semi-bold mb-0">Edit a course</h1>
+  </div>
+</header>
+
+<div class="card" style="width: 80%; margin-left: 10%">
+  <div class="card-body">
+    {% include 'partials/messages.html' %}
+    <form action="" method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {{ form.media }}
+      <div class="row">
+        <div class="col">
+          {% for field in form %}
+          <div class="form-group mb-4">
+            <!-- form validation messages -->
+            {% if field.errors %}
+              <div class="alert alert-danger" role="alert">
+                {% for error in field.errors %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
+            <label>{{ field.label_tag }}</label>
+            {% if field.name == 'description' %}
+              {{ field|safe }}
+            {% else %}
+              {{ field }}
+            {% endif %}
+            <div>
+              <small>{{ field.help_text }}</small>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="w-100"></div>
+      </div>
+      <button type="submit" class="btn btn-primary">Edit</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}

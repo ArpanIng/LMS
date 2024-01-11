@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sign Up{% endblock title %}
+
+{% block content %}
+<div class="container mt-11 mb-11">
+  <div class="row gx-0">
+    <div class="col-md-7 col-xl-4 mx-auto">
+      <!-- Register -->
+      <h3 class="mb-6">Sign Up and Start Learning!</h3>
+
+      <!-- Form Register -->
+      <form action="" method="post" class="mb-5" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form__group mb-5">
+            <!-- form validation messages -->
+            {% if field.errors %}
+            <div class="alert alert-danger" role="alert">
+              {% for error in field.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+            {% endif %}
+            <label>{{ field.label_tag }}</label>
+            {{ field }}
+          </div>
+        {% endfor %}
+        <button class="btn btn-block btn-primary" type="submit">SIGN UP</button>
+      </form>
+
+      <p class="mb-0 font-size-sm text-center">
+        Already have an account?
+        <a class="text-underline" href="{% url 'accounts:login' %}">Log In</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock content %}

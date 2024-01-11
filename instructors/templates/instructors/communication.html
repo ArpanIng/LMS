@@ -1,0 +1,46 @@
+{% extends 'instructors/base_instructor.html' %}
+
+{% block content %}
+<div class="container bg-primary">
+  <nav class="mb-4 mb-md-4 mt-4" aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-scroll">
+      <li class="breadcrumb-item">
+        <a class="text-gray-800" href="{% url 'instructors:courses' %}">
+          Courses
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-gray-800" href="{% url 'instructors:course_list' %}">
+          My Courses
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-white" href="{% url 'instructors:communication' %}">
+          Communication
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-gray-800" href="{% url 'instructors:tools' %}">
+          Tools
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a class="text-gray-800" href="{% url 'instructors:resources' %}">
+          Resources
+        </a>
+      </li>
+    </ol>
+  </nav>
+</div>
+
+<header class="py-8 py-md-8">
+  <div class="container py-xl-2">
+    <h1 class="display-4 fw-semi-bold mb-0">Q&A</h1>
+  </div>
+</header>
+
+<div class="container text-center mb-11">
+  <h2>No questions yet</h2>
+  <p>Q&A is a forum where your students can ask questions, hear your responses, and respond to one another. Here’s where you’ll see your courses’ Q&A threads</p>
+</div>
+{% endblock content %}

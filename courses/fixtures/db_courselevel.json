@@ -1,0 +1,30 @@
+[
+    {
+        "model": "courses.courselevel",
+        "pk": 1,
+        "fields": {
+            "title": "All Levels"
+        }
+    },
+    {
+        "model": "courses.courselevel",
+        "pk": 2,
+        "fields": {
+            "title": "Beginner"
+        }
+    },
+    {
+        "model": "courses.courselevel",
+        "pk": 3,
+        "fields": {
+            "title": "Intermediate"
+        }
+    },
+    {
+        "model": "courses.courselevel",
+        "pk": 4,
+        "fields": {
+            "title": "Advanced"
+        }
+    }
+]

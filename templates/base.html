@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="favicon.png" />
+
+    <!-- Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Lora:wght@400;700&amp;family=Montserrat:wght@400;500;600;700&amp;family=Nunito:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Libs CSS -->
+    {% include 'partials/css_libs.html' %}
+
+    <title>{% block title %}{% endblock title %}</title>
+    <script
+      src="https://kit.fontawesome.com/0e5fa0ea8a.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- NAVBAR =========================== -->
+    {% include 'partials/header.html' %}
+
+    {% block content %}{% endblock content%}
+
+    <!-- FOOTER ========================= -->
+    {% include 'partials/footer.html' %}
+
+    <!-- JAVASCRIPT ============================ -->
+    {% include 'partials/js_libs.html' %}
+  </body>
+</html>

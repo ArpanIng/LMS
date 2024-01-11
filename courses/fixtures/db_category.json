@@ -1,0 +1,340 @@
+[
+    {
+        "model": "courses.category",
+        "pk": 1,
+        "fields": {
+            "title": "Business",
+            "parent": null,
+            "slug": "business",
+            "icon": "fas fa-briefcase"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 2,
+        "fields": {
+            "title": "Development",
+            "parent": null,
+            "slug": "development",
+            "icon": "fas fa-laptop-code"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 3,
+        "fields": {
+            "title": "Design",
+            "parent": null,
+            "slug": "design",
+            "icon": "fas fa-bezier-curve"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 4,
+        "fields": {
+            "title": "Photography",
+            "parent": null,
+            "slug": "photography",
+            "icon": "fas fa-camera"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 5,
+        "fields": {
+            "title": "Music",
+            "parent": null,
+            "slug": "music",
+            "icon": "fas fa-music"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 6,
+        "fields": {
+            "title": "Personal Development",
+            "parent": null,
+            "slug": "personal-development",
+            "icon": "fas fa-file-alt"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 7,
+        "fields": {
+            "title": "Marketing",
+            "parent": null,
+            "slug": "marketing",
+            "icon": "fas fa-bullhorn"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 8,
+        "fields": {
+            "title": "IT and Software",
+            "parent": null,
+            "slug": "it-and-software",
+            "icon": "fas fa-server"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 9,
+        "fields": {
+            "title": "Health and Fitness",
+            "parent": null,
+            "slug": "health-and-fitness"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 10,
+        "fields": {
+            "title": "Lifestyle",
+            "parent": null,
+            "slug": "lifestyle"
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 11,
+        "fields": {
+            "title": "Communication",
+            "parent": 1,
+            "slug": "communication",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 12,
+        "fields": {
+            "title": "Management",
+            "parent": 1,
+            "slug": "management",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 13,
+        "fields": {
+            "title": "Sales",
+            "parent": 1,
+            "slug": "sales",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 14,
+        "fields": {
+            "title": "Web Development",
+            "parent": 2,
+            "slug": "web-development",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 15,
+        "fields": {
+            "title": "Data Science",
+            "parent": 2,
+            "slug": "data-science",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 16,
+        "fields": {
+            "title": "Mobile Development",
+            "parent": 2,
+            "slug": "mobile-development",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 17,
+        "fields": {
+            "title": "Game Development",
+            "parent": 2,
+            "slug": "game-development",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 18,
+        "fields": {
+            "title": "Game Design",
+            "parent": 3,
+            "slug": "game-design",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 19,
+        "fields": {
+            "title": "Fashion Design",
+            "parent": 3,
+            "slug": "fashion-design",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 20,
+        "fields": {
+            "title": "Web Design",
+            "parent": 3,
+            "slug": "web-design",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 21,
+        "fields": {
+            "title": "Digital Photography",
+            "parent": 4,
+            "slug": "digital-photography",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 22,
+        "fields": {
+            "title": "Commercial Photography",
+            "parent": 4,
+            "slug": "commercial-photography",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 23,
+        "fields": {
+            "title": "Instruments",
+            "parent": 5,
+            "slug": "instruments",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 24,
+        "fields": {
+            "title": "Music Production",
+            "parent": 5,
+            "slug": "music-production",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 25,
+        "fields": {
+            "title": "Vocal",
+            "parent": 5,
+            "slug": "vocal",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 26,
+        "fields": {
+            "title": "Leadership",
+            "parent": 6,
+            "slug": "leadership",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 27,
+        "fields": {
+            "title": "Creativity",
+            "parent": 6,
+            "slug": "creativity",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 28,
+        "fields": {
+            "title": "Influence",
+            "parent": 6,
+            "slug": "influence",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 29,
+        "fields": {
+            "title": "Digital Marketing",
+            "parent": 7,
+            "slug": "digital-marketing",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 30,
+        "fields": {
+            "title": "Branding",
+            "parent": 7,
+            "slug": "branding",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 31,
+        "fields": {
+            "title": "IT Certifications",
+            "parent": 8,
+            "slug": "it-certifications",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 32,
+        "fields": {
+            "title": "Hardware",
+            "parent": 8,
+            "slug": "hardware",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 33,
+        "fields": {
+            "title": "Fitness",
+            "parent": 9,
+            "slug": "fitness",
+            "icon": null
+        }
+    },
+    {
+        "model": "courses.category",
+        "pk": 34,
+        "fields": {
+            "title": "Sports",
+            "parent": 9,
+            "slug": "sports",
+            "icon": null
+        }
+    }
+]
