@@ -94,6 +94,7 @@ class RegistrationForm(UserCreationForm):
         )
 
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault("label_suffix", "")  # sets the label_suffix to none
         super(RegistrationForm, self).__init__(*args, **kwargs)
         attrs = {"class": "form-control"}
         placeholders = {

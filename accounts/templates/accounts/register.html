@@ -13,18 +13,18 @@
       <form action="" method="post" class="mb-5" novalidate>
         {% csrf_token %}
         {% for field in form %}
-          <div class="form__group mb-5">
-            <!-- form validation messages -->
-            {% if field.errors %}
-            <div class="alert alert-danger" role="alert">
+        <div class="form__group mb-5">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          <!-- form validation messages -->
+          {% if field.errors %}
+            <div class="pt-2" role="alert">
               {% for error in field.errors %}
-                {{ error }}
+                <span class="text-alizarin">{{ error }}</span>
               {% endfor %}
             </div>
-            {% endif %}
-            <label>{{ field.label_tag }}</label>
-            {{ field }}
-          </div>
+          {% endif %}
+        </div>
         {% endfor %}
         <button class="btn btn-block btn-primary" type="submit">SIGN UP</button>
       </form>
