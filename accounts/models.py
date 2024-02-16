@@ -27,6 +27,8 @@ class CustomUserManager(BaseUserManager):
             username=username,
             first_name=first_name,
             last_name=last_name,
+            # Assigns the base role defined in the CustomUser model to the role field.
+            role=self.model.base_role,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -38,31 +40,31 @@ class CustomUserManager(BaseUserManager):
             username=username,
             first_name=first_name,
             last_name=last_name,
+            role=CustomUser.RoleChoices.ADMIN,
             password=password,
         )
         user.is_active = True
-        # Designates whether the user has administrative privileges.
-        user.role = RoleChoices.ADMIN
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
         return user
 
 
-class RoleChoices(models.TextChoices):
-    """
-    numeration class representing different user roles
-    """
-
-    STUDENT = "student", "Student"
-    INSTRUCTOR = "instructor", "Instructor"
-    ADMIN = "admin", "Admin"
-
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
     Custom user model for the application.
     """
+
+    class RoleChoices(models.TextChoices):
+        """
+        numeration class representing different user roles
+        """
+
+        ADMIN = "ADMIN", "Admin"
+        STUDENT = "STUDENT", "Student"
+        INSTRUCTOR = "INSTRUCTOR", "Instructor"
+
+    base_role = RoleChoices.ADMIN
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
@@ -86,7 +88,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         max_length=10,
         choices=RoleChoices.choices,
         default=RoleChoices.STUDENT,
-        help_text="Custom user roles (default: Student)",
+        help_text="Custom user roles",
     )
 
     # social media links
@@ -134,19 +136,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    def switch_role(self):
-        """Switches the user's role between 'Student' and 'Instructor'."""
-        if self.role == RoleChoices.STUDENT:
-            self.role = RoleChoices.INSTRUCTOR
-            self.save()
-            return "Instructor"
-        elif self.role == RoleChoices.INSTRUCTOR:
-            self.role = RoleChoices.STUDENT
-            self.save()
-            return "Student"
-        else:
-            return self.role
-
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -155,3 +144,44 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # instance is being saved for the first time
+            self.role = self.base_role
+        return super().save(*args, **kwargs)
+
+
+class StudentManager(BaseUserManager):
+    """Manager for the Student proxy model."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(role=CustomUser.RoleChoices.STUDENT)
+
+
+class Student(CustomUser):
+    """Proxy model for users with the role of Student."""
+
+    base_role = CustomUser.RoleChoices.STUDENT
+
+    class Meta:
+        proxy = True
+
+    students = StudentManager()
+
+
+class InstructorManager(BaseUserManager):
+    """Manager for the Instructor proxy model."""
+
+    def get_queryset(self):
+        return super().get_queryset().filter(role=CustomUser.RoleChoices.INSTRUCTOR)
+
+
+class Instructor(CustomUser):
+    """Proxy model for users with the role of Instructor."""
+
+    base_role = CustomUser.RoleChoices.INSTRUCTOR
+
+    class Meta:
+        proxy = True
+
+    instructors = InstructorManager()
