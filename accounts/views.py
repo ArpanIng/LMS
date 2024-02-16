@@ -22,6 +22,11 @@ User = get_user_model()
 
 
 def handle_users_redirect(request):
+    """
+    Raises a Http404 exception with a message indicating an invalid URL.
+      - If a custom handler404 function is defined in the URL configuration, it will be invoked to handle the 404 error
+      otherwise django's default 404 error handling behavior will be applied.
+    """
     raise Http404("Invalid URL")
 
 
@@ -56,7 +61,7 @@ class CustomLogoutView(views.LogoutView):
     pass
 
 
-class PublicProfileView(LoginRequiredMixin, generic.View):
+class PublicProfileView(generic.View):
     def get(self, request, *args, **kwargs):
         first_name = kwargs.get("first_name")
         last_name = kwargs.get("last_name")
@@ -67,7 +72,7 @@ class PublicProfileView(LoginRequiredMixin, generic.View):
                 )
             except CustomUser.DoesNotExist:
                 messages.error(request, "User profile not found.")
-                return redirect("accounts:profile")
+                handle_users_redirect(request)
 
         return render(request, "accounts/public_profile.html", {"user": user})
 
