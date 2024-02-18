@@ -64,19 +64,13 @@
                 <div class="col">
                   {% for field in form %}
                   <div class="form-group mb-4">
-                    <!-- form validation messages -->
-                    {% if field.errors %}
-                    <div class="alert alert-danger" role="alert">
-                      {% for error in field.errors %}
-                        {{ error }}
-                      {% endfor %}
-                    </div>
-                    {% endif %}
                     <label>{{ field.label_tag }}</label>
                     {{ field }}
                     <div>
                       <small>{{ field.help_text }}</small>
                     </div>
+                    <!-- form validation messages -->
+                    {% include 'partials/form_errors.html' %}
                   </div>
                   {% endfor %}
                 </div>

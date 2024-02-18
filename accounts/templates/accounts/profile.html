@@ -43,13 +43,7 @@
             <label>{{ field.label_tag }}</label>
             {{ field }}
             <!-- form validation messages -->
-            {% if field.errors %}
-              <div class="pt-2" role="alert">
-                {% for error in field.errors %}
-                  <span class="text-alizarin">{{ error }}</span>
-                {% endfor %}
-              </div>
-            {% endif %}
+            {% include 'partials/form_errors.html' %}
             <div>
               <small>{{ field.help_text }}</small>
             </div>
