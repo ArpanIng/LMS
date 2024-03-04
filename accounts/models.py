@@ -1,7 +1,9 @@
 import uuid
+
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
+    Group,
     PermissionsMixin,
 )
 from django.db import models
@@ -27,11 +29,26 @@ class CustomUserManager(BaseUserManager):
             username=username,
             first_name=first_name,
             last_name=last_name,
-            # Assigns the base role defined in the CustomUser model to the role field.
-            role=self.model.base_role,
         )
         user.set_password(password)
+        # Save the user before adding groups
         user.save(using=self._db)
+
+        # Determine the appropriate group based on the type of user being created
+        if isinstance(user, Student):
+            group_name = "Student"
+        elif isinstance(user, Instructor):
+            group_name = "Instructor"
+        else:
+            group_name = "Admin"
+
+        group, _ = Group.objects.get_or_create(name=group_name)
+        user.groups.add(group)  # Add user to their respective group
+
+        # Set is_staff to True for Admin users
+        if group_name == "Admin":
+            user.is_staff = True
+            user.save(using=self._db)
         return user
 
     def create_superuser(self, email, username, first_name, last_name, password=None):
@@ -40,7 +57,6 @@ class CustomUserManager(BaseUserManager):
             username=username,
             first_name=first_name,
             last_name=last_name,
-            role=CustomUser.RoleChoices.ADMIN,
             password=password,
         )
         user.is_active = True
@@ -54,17 +70,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
     Custom user model for the application.
     """
-
-    class RoleChoices(models.TextChoices):
-        """
-        numeration class representing different user roles
-        """
-
-        ADMIN = "ADMIN", "Admin"
-        STUDENT = "STUDENT", "Student"
-        INSTRUCTOR = "INSTRUCTOR", "Instructor"
-
-    base_role = RoleChoices.ADMIN
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
@@ -84,12 +89,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         blank=True,
     )
     about = models.TextField(null=True, blank=True)
-    role = models.CharField(
-        max_length=10,
-        choices=RoleChoices.choices,
-        default=RoleChoices.STUDENT,
-        help_text="Custom user roles",
-    )
 
     # social media links
     website_link = models.URLField(
@@ -140,28 +139,23 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
 
     def has_perm(self, perm, obj=None):
-        return self.is_superuser
-
-    def has_module_perms(self, app_label):
-        return True
-
-    def save(self, *args, **kwargs):
-        if not self.pk:  # instance is being saved for the first time
-            self.role = self.base_role
-        return super().save(*args, **kwargs)
+        """Does the user have a specific permission?"""
+        if self.is_superuser:
+            return True  # Superusers have all permissions
+        else:
+            # Delegate permission check to PermissionsMixin to handle permissions for non-superusers
+            return super().has_perm(perm, obj)
 
 
 class StudentManager(BaseUserManager):
     """Manager for the Student proxy model."""
 
     def get_queryset(self):
-        return super().get_queryset().filter(role=CustomUser.RoleChoices.STUDENT)
+        return super().get_queryset().filter(groups__name="Student")
 
 
 class Student(CustomUser):
     """Proxy model for users with the role of Student."""
-
-    base_role = CustomUser.RoleChoices.STUDENT
 
     class Meta:
         proxy = True
@@ -173,13 +167,11 @@ class InstructorManager(BaseUserManager):
     """Manager for the Instructor proxy model."""
 
     def get_queryset(self):
-        return super().get_queryset().filter(role=CustomUser.RoleChoices.INSTRUCTOR)
+        return super().get_queryset().filter(groups__name="Instructor")
 
 
 class Instructor(CustomUser):
     """Proxy model for users with the role of Instructor."""
-
-    base_role = CustomUser.RoleChoices.INSTRUCTOR
 
     class Meta:
         proxy = True

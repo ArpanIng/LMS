@@ -10,13 +10,12 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ["email", "username", "last_login", "role", "is_staff"]
+    list_display = ["email", "username", "last_login", "is_staff"]
     list_display_links = ["email", "username"]
     list_filter = [
         "is_staff",
         "is_superuser",
         "is_active",
-        "role",
         "groups",
     ]
     fieldsets = [
@@ -34,7 +33,6 @@ class UserAdmin(BaseUserAdmin):
                 ]
             },
         ),
-        ("Role", {"fields": ["role"]}),
         (
             "Social links",
             {
