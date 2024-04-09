@@ -4,16 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "==4.2.4"
+django = "==4.2.10"
 django-environ = "*"
 crispy-bootstrap5 = "*"
 pillow = "*"
 django-ckeditor = "*"
+psycopg2 = "*"
 
 [dev-packages]
 black = "*"
 django-debug-toolbar = "*"
 isort = "*"
+djhtml = "*"
 
 [requires]
 python_version = "3.11"

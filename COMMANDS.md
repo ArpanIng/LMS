@@ -51,3 +51,29 @@ $ python manage.py createinstructorgroup
 ```bash
 $ python manage.py createstudentgroup
 ```
+
+## Third-party packages command
+
+### Indent templates using the djhtml command
+
+```bash
+$ djhtml template.html
+```
+
+### python black formatter
+
+```bash
+$ black {source_file_or_directory}...
+```
+
+### isort specific files
+
+```bash
+isort mypythonfile.py mypythonfile2.py
+```
+
+### To apply recursively
+
+```bash
+isort .
+```
