@@ -1,0 +1,31 @@
+<header class="py-8 py-md-8" style="background-image: none">
+  <div class="container py-xl-2">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-scroll justify-content">
+        {% for parent_category in parent_categories %}
+          <li class="breadcrumb-item">
+            <a
+              class="text-gray-800{% if request_page == 'category' %}-active{% endif %}"
+              href="{{ parent_category.get_category_url }}"
+            >
+              {{ parent_category.title|title }}
+            </a>
+          </li>
+          {% if parent_category.children.exists %}
+            {% for sub_category in parent_category.children.all %}
+              <li class="breadcrumb-item">
+                <a
+                  class="text-gray-800"
+                  href="{{ sub_category.get_subcategory_url }}"
+                >
+                  {{ sub_category.title|title }}
+                </a>
+              </li>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </ol>
+    </nav>
+    <h1 class="display-4 fw-semi-bold mb-0">{{ title|title }} Courses</h1>
+  </div>
+</header>
