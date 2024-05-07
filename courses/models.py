@@ -1,11 +1,10 @@
-from ckeditor.fields import RichTextField
-
 from django.conf import settings
 from django.core.validators import URLValidator
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 class Category(models.Model):
@@ -102,7 +101,7 @@ class Course(models.Model):
     title = models.CharField(max_length=250, help_text="Enter course title.")
     slug = models.SlugField(max_length=250, unique=True)
     summary = models.CharField(max_length=800, help_text="Enter a summary of a course.")
-    description = RichTextField(help_text="Enter the description of the course.")
+    description = CKEditor5Field("Description", config_name="extends")
     regular_price = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -123,7 +122,9 @@ class Course(models.Model):
         default=Status.DRAFT,
         help_text="Select the status of the course.",
     )
-    featured_image = models.ImageField(default="", upload_to="Courses/", null=True)
+    featured_image = models.ImageField(
+        default="default_course_image.jpg", upload_to="Courses/", null=True
+    )
     is_free = models.BooleanField(
         default=False,
         help_text="Indicates whether the course is available for free or not.",

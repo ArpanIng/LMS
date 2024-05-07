@@ -10,7 +10,7 @@ The `CustomUserManager` class is responsible for creating users and managing use
 
 ### Default Group Assignment
 
-By default, users created through the `CustomUser` model directly are assigned to the "Admin" group.
+By default, users created through the `CustomUserManager` manager directly are assigned to the "Admin" group.
 
 ## Proxy Models
 

@@ -4,11 +4,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic.base import View, TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from accounts.role_mixins import StudentRequiredMixin
 from carts.models import Cart, CartItem, Wishlist, WishlistItem
 
 from .models import Category, Course, CourseLevel, Enrollment
@@ -48,6 +47,7 @@ class CourseByCategoryView(ListView):
         context["parent_categories"] = parent_categories
         context["course_count_by_category"] = self.get_queryset().count()
         context["course_levels"] = CourseLevel.objects.all()
+        context["request_page"] = "category"
         return context
 
 
@@ -76,6 +76,7 @@ class CourseBySubcategoryView(ListView):
         context["parent_categories"] = parent_categories
         context["course_count_by_subcategory"] = self.get_queryset().count()
         context["course_levels"] = CourseLevel.objects.all()
+        context["request_page"] = "sub-category"
         return context
 
 
@@ -109,19 +110,6 @@ class CourseDetailView(DetailView):
             raise Http404("This course is not available.")
         return obj
 
-    def get_template_names(self):
-        user = self.request.user
-        if user.is_authenticated:
-            role_based_templates = {
-                "student": self.template_name,
-                "instructor": ["instructors/course_detail.html"],
-            }
-            return role_based_templates.get(
-                user.role, self.template_name
-            )  # role_based_templates is a dict obj
-        else:
-            return self.template_name
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = self.object
@@ -154,7 +142,7 @@ class CourseDetailView(DetailView):
         return context
 
 
-class CourseEnrollView(LoginRequiredMixin, StudentRequiredMixin, View):
+class CourseEnrollView(LoginRequiredMixin, View):
     def get(self, request, course_slug, *args, **kwargs):
         course = get_object_or_404(Course, slug=course_slug)
         return redirect(course.get_absolute_url())
@@ -182,7 +170,7 @@ class CourseEnrollView(LoginRequiredMixin, StudentRequiredMixin, View):
         return redirect("courses:my_learning")
 
 
-class CourseUnenrollView(LoginRequiredMixin, StudentRequiredMixin, View):
+class CourseUnenrollView(LoginRequiredMixin, View):
     def get(self, request, course_slug, *args, **kwargs):
         course = get_object_or_404(Course, slug=course_slug)
         return redirect(course.get_absolute_url())

@@ -8,8 +8,8 @@ django = "~=4.2"
 django-environ = "*"
 crispy-bootstrap5 = "*"
 pillow = "*"
-django-ckeditor = "*"
 psycopg2 = "*"
+django-ckeditor-5 = "*"
 
 [dev-packages]
 black = "*"

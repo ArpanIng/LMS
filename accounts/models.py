@@ -77,7 +77,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     profile = models.ImageField(
-        default="default.jpg",
+        default="default_user_profile.jpg",
         upload_to="User Profiles/",
         null=True,
         blank=True,

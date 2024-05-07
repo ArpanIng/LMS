@@ -1,4 +1,4 @@
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from django import forms
 
@@ -28,5 +28,5 @@ class CourseForm(forms.ModelForm):
         super(CourseForm, self).__init__(*args, **kwargs)
         attrs = {"class": "form-control"}
         for field_name, field in self.fields.items():
-            if field_name not in ["is_free", "certificate"]:
+            if field_name not in ["description", "is_free", "certificate"]:
                 field.widget.attrs.update(attrs)

@@ -18,11 +18,7 @@
           {% for field in form %}
           <div class="form-group mb-4">
             <label>{{ field.label_tag }}</label>
-            {% if field.name == 'description' %}
               {{ field }}
-            {% else %}
-              {{ field }}
-            {% endif %}
             <div>
               <small>{{ field.help_text }}</small>
             </div>

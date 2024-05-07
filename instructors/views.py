@@ -5,7 +5,6 @@ from django.views.generic.base import View, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
-from accounts.role_mixins import InstructorRequiredMixin
 from courses.models import Category, Course
 
 from .forms import CourseForm
@@ -16,23 +15,23 @@ class Teach(View):
         return render(request, "instructors/teaching.html")
 
 
-class Courses(LoginRequiredMixin, InstructorRequiredMixin, TemplateView):
+class Courses(LoginRequiredMixin, TemplateView):
     template_name = "instructors/courses.html"
 
 
-class Communication(LoginRequiredMixin, InstructorRequiredMixin, TemplateView):
+class Communication(LoginRequiredMixin, TemplateView):
     template_name = "instructors/communication.html"
 
 
-class Tools(LoginRequiredMixin, InstructorRequiredMixin, TemplateView):
+class Tools(LoginRequiredMixin, TemplateView):
     template_name = "instructors/tools.html"
 
 
-class Resources(LoginRequiredMixin, InstructorRequiredMixin, TemplateView):
+class Resources(LoginRequiredMixin, TemplateView):
     template_name = "instructors/resources.html"
 
 
-class CourseCreateView(LoginRequiredMixin, InstructorRequiredMixin, CreateView):
+class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
     form_class = CourseForm
     template_name = "instructors/course_create.html"
@@ -53,7 +52,7 @@ class CourseCreateView(LoginRequiredMixin, InstructorRequiredMixin, CreateView):
         return response
 
 
-class CourseListview(LoginRequiredMixin, InstructorRequiredMixin, ListView):
+class CourseListview(LoginRequiredMixin, ListView):
     model = Course
     context_object_name = "course_list"
     template_name = "instructors/course_list.html"
@@ -67,9 +66,7 @@ class CourseListview(LoginRequiredMixin, InstructorRequiredMixin, ListView):
         return context
 
 
-class CourseEditView(
-    LoginRequiredMixin, InstructorRequiredMixin, UserPassesTestMixin, UpdateView
-):
+class CourseEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Course
     form_class = CourseForm
     slug_field = "slug"
@@ -86,6 +83,6 @@ class CourseEditView(
         return course.instructor == self.request.user
 
 
-class CourseDeleteView(LoginRequiredMixin, InstructorRequiredMixin, DeleteView):
+class CourseDeleteView(LoginRequiredMixin, DeleteView):
     model = Course
     template_name = "instructors/course_delete.html"
