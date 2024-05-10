@@ -1,13 +1,6 @@
 from django.contrib import admin
 
-from .models import Cart, CartItem, Wishlist, WishlistItem
-
-admin.site.register(Cart)
-
-
-@admin.register(CartItem)
-class CartItemAdmin(admin.ModelAdmin):
-    readonly_fields = ["date_added"]
+from .models import Wishlist, WishlistItem
 
 
 @admin.register(Wishlist)

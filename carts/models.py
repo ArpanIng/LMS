@@ -8,7 +8,7 @@ User = settings.AUTH_USER_MODEL
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -19,10 +19,10 @@ class Cart(models.Model):
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    date_added = models.DateTimeField(default=timezone.now)
+    date_added = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"CartItem: {self.id}"
+        return f"{self.cart} CartItem: {self.id}"
 
 
 class Wishlist(models.Model):

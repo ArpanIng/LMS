@@ -1,0 +1,111 @@
+<div class="border rounded-lg px-6 pt-6 bg-white">
+  <!-- Card -->
+  <div class="card sk-fade flex-md-row mb-6 align-items-center row gx-0">
+    <!-- Image -->
+    <div class="col-md-4 card-zoom position-relative">
+      <a
+        href="{{ course.get_absolute_url }}"
+        class="card-img sk-thumbnail img-ratio-2 d-block"
+      >
+        <img
+          class="rounded shadow-light-lg"
+          src="{{ course.featured_image.url }}"
+          alt="{{ course.title }}"
+        />
+      </a>
+    </div>
+
+    <div
+      class="col-md-8 card-footer px-2 px-md-5 py-4 py-md-0 position-relative"
+    >
+      <!-- Heading -->
+      <div class="position-relative">
+        <a
+          href="{{ course.get_absolute_url }}"
+          class="d-block stretched-link"
+        ><h4 class="line-clamp-2 me-md-6 me-lg-10 me-xl-4 mb-3">
+          {{ course.title }}
+        </h4>
+        </a>
+        <span class="mb-1 d-inline-block text-gray-800">
+          {{ course.instructor.get_full_name }}
+        </span>
+        <ul class="nav mx-n3 mb-3">
+          <li class="nav-item px-3">
+            <div class="d-flex align-items-center">
+              <div class="font-size-sm">5 lessons</div>
+            </div>
+          </li>
+          <li class="nav-item px-3">
+            <div class="d-flex align-items-center">
+              <div class="font-size-sm">8h 12m</div>
+            </div>
+          </li>
+          <li class="nav-item px-3">
+            <div class="d-flex align-items-center">
+              <div class="font-size-sm">{{ course.level|title }}</div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="row mx-n2 align-items-center">
+          {% if course.discount_price %}
+            <div class="col px-2">
+              <del class="font-size-sm">${{ course.regular_price }}</del>
+              <ins class="h4 mb-0 mb-lg-n1 ms-1"
+              >${{ course.discount_price }}
+              </ins>
+            </div>
+          {% else %}
+            <div class="col px-2">
+              <ins class="h4 mb-0 mb-lg-n1 ms-1"
+              >${{ course.regular_price }}
+              </ins>
+            </div>
+          {% endif %}
+
+          <div class="col-auto px-2">
+            <div class="d-lg-flex align-items-end flex-wrap">
+              <div class="star-rating mb-2 mb-lg-0 me-lg-3">
+                <div class="rating" style="width: 50%"></div>
+              </div>
+              <div class="font-size-sm">
+                <span>5.45 (5.8k+ reviews)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- remove from cart button -->
+  <div class="card flex-md-row mb-6">
+    <button type="button" data-index="{{ course.id }}" id="remove-from-cart">
+      <i class="far fa-trash-alt text-secondary font-size-lg"></i>
+    </button>
+  </div>
+</div>
+
+<script>
+  // check if button is pressed
+  // delete item from cart
+  $(document).on('click', '#remove-from-cart', function(e) {
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '{% url 'carts:remove_from_cart' %}',
+      data: {
+        course_id: $(this).data('index'),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        action: 'post'
+      },
+
+      success: function(json) {
+        location.reload();
+      },
+      error: function(xhr, errmsg, err) {}
+    });
+  })
+</script>

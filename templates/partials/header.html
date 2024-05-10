@@ -182,13 +182,12 @@
           href="{% url 'carts:cart' %}"
           class="nav-link d-flex px-3 px-md-4 position-relative text-secondary icon-xs"
         >
-          {% if cart_items %}
           <span
             class="badge badge-primary rounded-circle fw-bold badge-float mt-n1 ms-n2 px-0 w-16"
             style="font-size: 8px"
-            >{{ cart_item_count }}
+            id="cart-quantity"
+          >{{ cart|length }}
           </span>
-          {% endif %}
           <!-- Icon -->
           <svg
             width="13"

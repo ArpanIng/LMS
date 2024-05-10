@@ -8,7 +8,7 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 
-from carts.models import Cart, CartItem, Wishlist, WishlistItem
+from carts.models import Wishlist, WishlistItem
 
 from .models import Category, Course, CourseLevel, Enrollment
 
@@ -116,6 +116,8 @@ class CourseDetailView(DetailView):
         course = self.object
         user = self.request.user
 
+        in_cart = False
+
         if user.is_authenticated:
             # check if the student is already enrolled in the course
             is_enrolled = Enrollment.objects.filter(
@@ -128,18 +130,13 @@ class CourseDetailView(DetailView):
                 wishlist=wishlist, course=course
             ).exists()
 
-            # check if the course is in the user's cart
-            cart, created = Cart.objects.get_or_create(user=user)
-            cartitem = CartItem.objects.filter(cart=cart, course=course).exists()
-
         else:
             is_enrolled = False
             wishlist_item = False
-            cartitem = False
 
         context["enrolled"] = is_enrolled
         context["in_wishlist"] = wishlist_item
-        context["in_cart"] = cartitem
+        context["in_cart"] = in_cart
         return context
 
 

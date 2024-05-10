@@ -2,146 +2,52 @@
 {% load static %}
 
 {% block content %}
-<!-- PAGE TITLE ========================== -->
-<header class="py-8 py-md-10" style="background-image: none">
-  <div class="container py-xl-2">
-    <h1 class="display-4 fw-semi-bold mb-0">Shopping cart</h1>
-  </div>
-</header>
+  <!-- PAGE TITLE ========================== -->
+  <header class="py-8 py-md-10" style="background-image: none">
+    <div class="container py-xl-2">
+      <h1 class="display-4 fw-semi-bold mb-0">Shopping cart</h1>
+    </div>
+  </header>
 
-<!-- SHOP CART ========================= -->
-<div class="container pb-6 pb-xl-10">
-  <div class="row">
-    <h5>{{ cart_item_count }} Course{{ cart_item_count|pluralize }} in Cart</h5>
-    {% include 'partials/messages.html' %}
-    <div class="col-xl-8">
-      {% for cart_item in cart_items %}
-      <div class="border rounded-lg px-6 pt-6 bg-white">
-        <!-- Card -->
-        <div class="card sk-fade flex-md-row mb-6 align-items-center row gx-0">
-          <!-- Image -->
-          <div class="col-md-4 card-zoom position-relative">
-            <a
-              href="{{ cart_item.course.get_absolute_url }}"
-              class="card-img sk-thumbnail img-ratio-2 d-block"
-            >
-              <img
-                class="rounded shadow-light-lg"
-                src="{{ cart_item.course.featured_image.url }}"
-                alt="{{ cart_item.course.title }}"
-              />
-            </a>
-          </div>
+  <!-- SHOP CART ========================= -->
+  {% if cart_courses %}
+    <div class="container pb-6 pb-xl-10">
+      <div class="row">
+        <h5>{{ cart|length }} Course{{ cart|length|pluralize }} in Cart</h5>
+        {% include 'partials/messages.html' %}
+        <div class="col-xl-8">
+          {% for course in cart_courses %}
+            {% include 'carts/partials/cart_courses.html' %}
+          {% endfor %}
+        </div>
 
-          <div
-            class="col-md-8 card-footer px-2 px-md-5 py-4 py-md-0 position-relative"
-          >
-            <!-- Heading -->
-            <div class="position-relative">
+        <div class="cart-collaterals col-xl-4">
+          <div class="cart_totals">
+            <h2>Total:</h2>
+
+            <div class="d-flex align-items-center mb-2">
+              <ins class="h2 mb-0">${{ total_price }}</ins>
+              {% if total_discount_percentage %}
+                <del class="ms-3">${{ total_regular_price }}</del>
+              {% endif %}
+              {% if total_discount_percentage %}
+                <ins class="ms-3">{{ total_discount_percentage }}% off</ins>
+              {% endif %}
+            </div>
+
+            <div class="wc-proceed-to-checkout">
               <a
-                href="{{ cart_item.course.get_absolute_url }}"
-                class="d-block stretched-link"
-                ><h4 class="line-clamp-2 me-md-6 me-lg-10 me-xl-4 mb-3">
-                  {{ cart_item.course.title }}
-                </h4>
+                href="{% url 'carts:checkout' %}"
+                class="checkout-button button alt wc-forward"
+              >
+                Checkout
               </a>
-              <span class="mb-1 d-inline-block text-gray-800">
-                {{ cart_item.course.instructor.get_full_name }}
-              </span>
-              <ul class="nav mx-n3 mb-3">
-                <li class="nav-item px-3">
-                  <div class="d-flex align-items-center">
-                    <div class="font-size-sm">5 lessons</div>
-                  </div>
-                </li>
-                <li class="nav-item px-3">
-                  <div class="d-flex align-items-center">
-                    <div class="font-size-sm">8h 12m</div>
-                  </div>
-                </li>
-                <li class="nav-item px-3">
-                  <div class="d-flex align-items-center">
-                    <div class="font-size-sm">{{ cart_item.course.level|title }}</div>
-                  </div>
-                </li>
-              </ul>
-
-              <div class="row mx-n2 align-items-center">
-                {% if cart_item.course.discount_price %}
-                <div class="col px-2">
-                  <del class="font-size-sm">${{ cart_item.course.regular_price }}</del>
-                  <ins class="h4 mb-0 mb-lg-n1 ms-1"
-                    >${{ cart_item.course.discount_price }}
-                  </ins>
-                </div>
-                {% else %}
-                <div class="col px-2">
-                  <ins class="h4 mb-0 mb-lg-n1 ms-1"
-                    >${{ cart_item.course.regular_price }}
-                  </ins>
-                </div>
-                {% endif %}
-
-                <div class="col-auto px-2">
-                  <div class="d-lg-flex align-items-end flex-wrap">
-                    <div class="star-rating mb-2 mb-lg-0 me-lg-3">
-                      <div class="rating" style="width: 50%"></div>
-                    </div>
-                    <div class="font-size-sm">
-                      <span>5.45 (5.8k+ reviews)</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
             </div>
           </div>
         </div>
-
-        <div class="card flex-md-row mb-6">
-          <form action="{% url 'carts:remove_from_cart' cart_item.course.slug %}" method="post">
-            {% csrf_token %}
-            <button type="submit">
-              <i class="far fa-trash-alt text-secondary font-size-lg"></i>
-            </button>
-          </form>
-        </div>
-
-      </div>
-      {% empty %}
-      <div class="container mt-4 mb-4 text-center py-xl-2">
-        <h2 class="fw-semi-bold mb-0">Your cart is empty. Keep shopping to find a course!</h2>
-      </div>
-      <div class="text-center">
-        <a class="btn btn-primary" href="/">Keep shopping</a>
-      </div>
-      {% endfor %}
-    </div>
-
-    <div class="cart-collaterals col-xl-4">
-      <div class="cart_totals">
-        <h2>Total:</h2>
-
-        <div class="d-flex align-items-center mb-2">
-          <ins class="h2 mb-0">${{ total_price }}</ins>
-          {% if total_discount_percentage %}
-          <del class="ms-3">${{ total_regular_price }}</del>
-          {% endif %}
-          {% if total_discount_percentage %}
-          <ins class="ms-3">{{ total_discount_percentage }}% off</ins>
-            {% endif %}
-        </div>
-        
-        <div class="wc-proceed-to-checkout">
-          <a
-            href="{% url 'carts:checkout' %}"
-            class="checkout-button button alt wc-forward"
-          >
-            Checkout
-          </a>
-        </div>
       </div>
     </div>
-  </div>
-</div>
+  {% else %}
+    {% include 'carts/partials/empty_cart_template.html' %}
+  {% endif %}
 {% endblock content %}

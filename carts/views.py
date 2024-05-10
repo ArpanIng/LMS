@@ -1,224 +1,140 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import View
-from django.utils import timezone
-
 
 from courses.models import Course
 
-from .models import Cart, CartItem, Wishlist, WishlistItem
+from .carts import Cart
+from .models import CartItem, Wishlist, WishlistItem
 
 
-# def session_view(request):
-#     # cart_obj = Cart.objects.get_or_new(request)
-#     cart_id = request.session.get("cart_id", None)
-#     qs = Cart.objects.filter(id=cart_id)
-#     if qs.exists():
-#         cart_obj = qs.first()
-#         if request.user.is_authenticated and cart_obj.user is None:
-#             cart_obj.user = request.user
-#             cart_obj.save()
-#     else:
-#         cart_obj = Cart.objects.new(user=request.user)
-#         request.session["cart_id "] = cart_obj.id
-#     return render(request, "test.html")
+class AddToCartView(View):
+    pass
 
 
-def session_view(request):
-    cart_session_key = "cart_id"
-    cart_id = request.session.get(cart_session_key, None)
-    if cart_id:
-        # Check if the cart exists
-        cart_obj = Cart.objects.get(id=cart_id)
-    else:
-        # Create a new cart if it doesn't exist
-        cart_obj = Cart.objects.create(date_added=timezone.now())
-        request.session[cart_session_key] = cart_obj.id
-    # If the user is logged in, associate the cart with the logged-in user
-    if request.user.is_authenticated:
-        if not cart_obj.user:
-            # If there's no user associated with the anonymous cart, associate it with the logged-in user
-            cart_obj.user = request.user
-            cart_obj.save()
-    return render(request, "test.html")
+def add_to_cart(request):
+    # get the cart
+    cart = Cart(request)
+    if request.POST.get("action") == "post":
+        course_id = int(request.POST.get("course_id"))
+        course = get_object_or_404(Course, id=course_id)
+        # save the session
+        cart.add(course=course)
+        messages.success(request, "Course added successfully.")
+        # get cart quantity
+        cart_quantity = cart.__len__()
+        response = JsonResponse({"Success": "Course added to the cart."})
+        return response
 
 
-# class CartAddView(View):
-#     def post(self, request, *args, **kwargs):
-#         course_slug = self.kwargs["course_slug"]
-#         # get course slug from requested url
-#         course_obj = get_object_or_404(Course, slug=course_slug)
-
-#         cart_session_key = "cart_id"  # Use a unique session key for the cart
-#         cart_id = request.session.get(cart_session_key, None)
-#         if cart_id:  # check if cart exists
-#             cart_obj = Cart.objects.get(id=cart_id)
-#         else:
-#             cart_obj = Cart.objects.create(date_added=timezone.now())
-#             request.session[cart_session_key] = cart_obj.id
-
-#         cart_item, created = CartItem.objects.get_or_create(
-#             cart=cart_obj, course=course_obj
-#         )
-#         if created:
-#             return redirect("carts:cart")
-
-#         # if request.user.is_authenticated:
-#         #     try:
-#         #         existing_cart = Cart.objects.get(user=request.user)
-#         #         for item in cart_obj.cartitem_set.all():
-#         #             item.cart = existing_cart
-#         #             item.save()
-#         #     except Cart.DoesNotExist:
-#         #         cart_obj.user = request.user
-#         #         cart_obj.save()
-
-#         else:
-#             return redirect(course_obj.get_absolute_url())
-
-
-class CartAddView(View):
-    def post(self, request, *args, **kwargs):
-        course_slug = self.kwargs["course_slug"]
-        course_obj = get_object_or_404(Course, slug=course_slug)
-
-        cart_session_key = "cart_id"
-        cart_id = request.session.get(cart_session_key, None)
-        if cart_id:
-            # Check if the cart exists
-            cart_obj = Cart.objects.get(id=cart_id)
-        else:
-            # Create a new cart if it doesn't exist
-            cart_obj = Cart.objects.create(
-                user=self.request.user if self.request.user.is_authenticated else None
-            )
-            request.session[cart_session_key] = cart_obj.id
-
-        # Check if the course is already in the cart
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart_obj, course=course_obj
-        )
-
-        if created:
-            # Course already in the cart, update any necessary fields
-            return redirect("carts:cart")
-
-        # # If the user is logged in, associate the cart with the logged-in user
-        # if request.user.is_authenticated:
-        #     if cart_obj.user is None:
-        #         # If there's no user associated with the anonymous cart, associate it with the logged-in user
-        #         cart_obj.user = request.user
-        #         cart_obj.save()
-        #     else:
-        #         # If there's already a user associated with the cart, merge the anonymous cart with the user's cart
-        #         anonymous_cart = (
-        #             Cart.objects.filter(user=None).exclude(id=cart_obj.id).first()
-        #         )
-        #         if anonymous_cart:
-        #             for item in anonymous_cart.cartitem_set.all():
-        #                 item.cart = cart_obj
-        #                 item.save()
-        #             anonymous_cart.delete()
-
-        return redirect(course_obj.get_absolute_url())
-
-
-# class CartAddView(LoginRequiredMixin, View):
-#     def get(self, request, course_slug):
-#         course = get_object_or_404(Course, slug=course_slug)
-#         return redirect(course.get_absolute_url())
-
-#     def post(self, request, course_slug):
-#         user = self.request.user
-#         course = get_object_or_404(Course, slug=course_slug)
-
-#         # Try to get the user's cart, and create it if it doesn't exist
-#         cart, cart_created = Cart.objects.get_or_create(user=user)
-
-#         # Check if the course is already in the user's cart
-#         cart_item, created = CartItem.objects.get_or_create(cart=cart, course=course)
-#         if created:
-#             return redirect("carts:cart")
-#         else:
-#             return redirect(course.get_absolute_url())
-
-
-class CartRemoveView(LoginRequiredMixin, View):
-    def get(self, request, course_slug, *args, **kwargs):
-        course = get_object_or_404(Course, slug=course_slug)
-        return redirect(course.get_absolute_url())
-
-    def post(self, request, course_slug):
-        user = self.request.user
-        course = get_object_or_404(Course, slug=course_slug)
-        cart = get_object_or_404(Cart, user=user)
-
-        try:
-            cart_item = CartItem.objects.get(cart=cart, course=course)
-            cart_item.delete()
-            messages.success(request, "Course removed from cart.")
-        except CartItem.DoesNotExist:
-            messages.error(request, "Course not found in cart.")
-
-        return redirect("carts:cart")
-
-
-def calculate_totals(cart_items):
-    """
-    Calculate the total price, total discount price, and total regular price of cart items.
-    Returns:
-        Tuple: A tuple containing three values - total price, total discount price, and total regular price.
-    """
-    total_price = 0
-    total_regular_price = 0
-    total_discount_price = 0
-
-    for item in cart_items:
-        course = item.course
-        if course.discount_price is not None:  # course has discount
-            total_price += course.discount_price
-            total_discount_price += course.regular_price - course.discount_price
-        else:
-            total_price += course.regular_price
-
-        total_regular_price += course.regular_price
-
-    return total_price, total_discount_price, total_regular_price
+def remove_from_cart(request):
+    cart = Cart(request)
+    if request.POST.get("action") == "post":
+        course_id = int(request.POST.get("course_id"))
+        cart.delete(course=course_id)
+        messages.success(request, "Course removed successfully.")
+        response = JsonResponse({"course": "Course removed from the cart."})
+        return response
 
 
 class CartView(View):
-    """Display the user's cart."""
+    pass
 
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            user = self.request.user
-            cart = get_object_or_404(Cart, user=user)
-            cart_items = CartItem.objects.filter(cart=cart)
 
-            # tuple unpacking / assigns each value to its corresponding variable
-            total_price, total_discount_price, total_regular_price = calculate_totals(
-                cart_items
-            )
+def cart_view(request):
+    # get the cart
+    cart = Cart(request)
+    cart_courses = cart.get_courses()
+    cart_total = cart.calculate_totals()
+    # tuple unpacking / assigns each value to its corresponding variable
+    total_price, total_discount_percentage, total_regular_price = (
+        cart.calculate_totals()
+    )
 
-            if total_regular_price > 0:
-                total_discount_percentage = round(
-                    (total_discount_price / total_regular_price) * 100
-                )
-            else:
-                total_discount_percentage = 0
+    context = {
+        "cart_courses": cart_courses,
+        "total_price": total_price,
+        "total_discount_percentage": total_discount_percentage,
+        "total_regular_price": total_regular_price,
+    }
+    return render(request, "carts/cart.html", context)
 
-            context = {
-                "cart_items": cart_items,
-                "cart_item_count": cart_items.count(),
-                "total_price": total_price,
-                "total_regular_price": total_regular_price,
-                "total_discount_price": total_discount_price,
-                "total_discount_percentage": total_discount_percentage,
-            }
-            return render(request, "carts/cart.html", context)
-        else:
-            return render(request, "carts/cart.html")
+
+# class AddToCartView(View):
+#     def post(self, request, course_id, *args, **kwargs):
+#         course_obj = get_object_or_404(Course, id=course_id)  # Get course
+
+#         cart_session_key = "cart_id"
+#         cart_id = request.session.get(cart_session_key, None)
+
+#         if cart_id:  # check if cart exists
+#             cart_obj = Cart.objects.get(id=cart_id)
+#         else:  # Create a new cart
+#             cart_obj = Cart.objects.create()
+#             request.session[cart_session_key] = cart_obj.id
+
+#         # Check if the course already exists in the cart
+#         cart_item = cart_obj.cartitem_set.filter(course=course_obj).first()
+#         if cart_item:
+#             # Course already exists in the cart, display a message
+#             messages.warning(request, "This course is already in your cart.")
+#             return redirect(course_obj.get_absolute_url())
+#         else:
+#             cartitem = CartItem.objects.create(cart=cart_obj, course=course_obj)
+#             cartitem.save()
+#             return redirect("carts:cart")
+
+
+# class RemoveFromCartView(View):
+#     def post(self, request, course_id, *args, **kwargs):
+#         course_obj = get_object_or_404(Course, id=course_id)
+
+#         cart_session_key = "cart_id"
+#         cart_id = request.session.get(cart_session_key, None)
+
+#         if cart_id:
+#             cart_obj = Cart.objects.get(id=cart_id)
+#         else:
+#             pass
+
+#         cart_item = cart_obj.cartitem_set.filter(course=course_obj).first()
+#         if cart_item:
+#             cart_item.delete()
+#             messages.success(request, "Course removed from cart.")
+#         else:
+#             messages.error(request, "Course not found in cart.")
+
+#         return redirect("carts:cart")
+
+
+# class CartView(View):
+#     """Display the user's cart."""
+
+#     def get(self, request, *args, **kwargs):
+#         cart_session_key = "cart_id"
+#         cart_id = request.session.get(cart_session_key, None)
+
+#         if cart_id:
+#             cart_obj = Cart.objects.get(id=cart_id)
+#             cart_items = CartItem.objects.filter(cart=cart_obj).order_by("-date_added")
+
+#             # tuple unpacking / assigns each value to its corresponding variable
+#             total_price, total_discount_percentage, total_regular_price = (
+#                 cart_obj.calculate_totals()
+#             )
+
+#             context = {
+#                 "cart_items": cart_items,
+#                 "cart_item_count": cart_items.count(),
+#                 "total_price": total_price,
+#                 "total_discount_percentage": total_discount_percentage,
+#                 "total_regular_price": total_regular_price,
+#             }
+#             return render(request, "carts/cart.html", context)
+#         else:
+#             return render(request, "carts/empty_cart.html")
 
 
 class WishlistAddView(LoginRequiredMixin, View):
@@ -272,17 +188,3 @@ class WishlistView(LoginRequiredMixin, View):
 
 def checkout_view(request):
     return render(request, "carts/checkout.html")
-
-
-# class CartSession(models.Model):
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
-#     )
-#     courses = models.ManyToManyField(Course, blank=True)
-#     created = models.DateTimeField(auto_now_add=True)
-#     updated = models.DateTimeField(auto_now=True)
-
-#     objects = CartManager()
-
-#     def __str__(self):
-#         return str(self.id)
