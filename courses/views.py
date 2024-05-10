@@ -20,21 +20,44 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["categories"] = Category().get_top_categories.order_by("id")[:8]
-        context["courses"] = Course.published.all()[:6]
+        # fetches all published courses (6 records) with their associated instructors
+        published_courses = Course.published.select_related("instructor").all()[:6]
+        context["courses"] = published_courses
         return context
 
 
-class CourseByCategoryView(ListView):
+class CourseByCategoryOrSubcategoryView(ListView):
+    """
+    Displays a list of courses filtered by either category or subcategory.
+    """
+
+    model = Category
     context_object_name = "courses"
-    template_name = "courses/courses_by_category.html"
+    template_name = "courses/courses_by_category_or_subcategory.html"
 
     def get_queryset(self):
-        self.category = get_object_or_404(Category, slug=self.kwargs["category_slug"])
-        courses = Course.objects.filter(
-            category=self.category,
-            status=Course.Status.PUBLISHED,
-        )
+        """
+        Retrieves the queryset of courses based on the URL parameters.
+        """
+
+        if "category_slug" and "subcategory_slug" in self.kwargs:
+            self.subcategory = get_object_or_404(
+                self.model,
+                slug=self.kwargs["subcategory_slug"],
+            )
+            courses = Course.objects.filter(
+                subcategory=self.subcategory,
+                status=Course.Status.PUBLISHED,
+            ).select_related("instructor")
+        else:
+            self.category = get_object_or_404(
+                self.model,
+                slug=self.kwargs["category_slug"],
+            )
+            courses = Course.objects.filter(
+                category=self.category,
+                status=Course.Status.PUBLISHED,
+            ).select_related("instructor", "level")
         return courses
 
     def get_context_data(self, **kwargs):
@@ -43,40 +66,18 @@ class CourseByCategoryView(ListView):
         parent_categories = Category.objects.filter(
             slug=self.kwargs["category_slug"], parent__isnull=True
         )
-        context["title"] = self.category
+        if "category_slug" and "subcategory_slug" in self.kwargs:
+            context["title"] = self.subcategory
+            context["course_count_by_subcategory"] = self.get_queryset().count()
+        else:
+            context["title"] = self.category
+            context["course_count_by_category"] = self.get_queryset().count()
+            context["request_page"] = "category"
+
         context["parent_categories"] = parent_categories
-        context["course_count_by_category"] = self.get_queryset().count()
-        context["course_levels"] = CourseLevel.objects.all()
-        context["request_page"] = "category"
-        return context
-
-
-class CourseBySubcategoryView(ListView):
-    context_object_name = "subcatgeory_courses"
-    template_name = "courses/courses_by_subcategory.html"
-
-    def get_queryset(self):
-        self.subcategory = get_object_or_404(
-            Category,
-            slug=self.kwargs["subcategory_slug"],
-        )
-        courses = Course.objects.filter(
-            subcategory=self.subcategory,
-            status=Course.Status.PUBLISHED,
-        )
-        return courses
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # retrives categories without any parent (top-level category)
-        parent_categories = Category.objects.filter(
-            slug=self.kwargs["category_slug"], parent__isnull=True
-        )
-        context["title"] = self.subcategory
-        context["parent_categories"] = parent_categories
-        context["course_count_by_subcategory"] = self.get_queryset().count()
-        context["course_levels"] = CourseLevel.objects.all()
-        context["request_page"] = "sub-category"
+        context["course_levels"] = CourseLevel.objects.prefetch_related(
+            "course_set"
+        ).all()
         return context
 
 

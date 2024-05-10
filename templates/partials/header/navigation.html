@@ -1,0 +1,45 @@
+<ul class="navbar-nav ms-auto">
+  <li class="nav-item dropdown dropdown-full-width">
+    <a href="{% url 'courses:index' %}" class="nav-link px-xl-4 text-gigas">
+      <span>Home</span>
+    </a>
+  </li>
+  <li class="nav-item dropdown dropdown-full-width">
+    <a href="{% url 'courses:about' %}" class="nav-link text-gigas">
+      <span>About</span>
+    </a>
+  </li>
+  <li class="nav-item dropdown dropdown-full-width">
+    <a href="{% url 'courses:contact' %}" class="nav-link text-gigas">
+      <span>Contact Us</span>
+    </a>
+  </li>
+  {% if request.user.role == 'instructor' %}
+    <li class="nav-item dropdown dropdown-full-width">
+      <a href="{% url 'instructors:courses' %}" class="nav-link text-gigas">
+        <span>Instructor</span>
+      </a>
+    </li>
+  {% else %}
+    <li class="nav-item dropdown dropdown-full-width">
+      <a href="{% url 'teaching' %}" class="nav-link text-gigas">
+        <span>Teach on Skola</span>
+      </a>
+    </li>
+  {% endif %}
+  {% if request.user.is_authenticated %}
+    {% if request.user.role == 'instructor' %}
+      <li class="nav-item dropdown dropdown-full-width">
+        <a href="{% url 'instructors:course_list' %}" class="nav-link text-gigas">
+          <span>My Courses</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="nav-item dropdown dropdown-full-width">
+        <a href="{% url 'courses:my_learning' %}" class="nav-link text-gigas">
+          <span>My Learning</span>
+        </a>
+      </li>
+    {% endif %}
+  {% endif %}
+</ul>

@@ -17,12 +17,12 @@ urlpatterns += [
     path("courses/search/", views.SearchView.as_view(), name="search"),
     path(
         "courses/<slug:category_slug>/",
-        views.CourseByCategoryView.as_view(),
+        views.CourseByCategoryOrSubcategoryView.as_view(),
         name="courses_by_category",
     ),
     path(
         "courses/<slug:category_slug>/<slug:subcategory_slug>/",
-        views.CourseBySubcategoryView.as_view(),
+        views.CourseByCategoryOrSubcategoryView.as_view(),
         name="courses_by_subcategory",
     ),
 ]

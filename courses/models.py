@@ -50,9 +50,10 @@ class Category(models.Model):
             },
         )
 
-    @property
-    def get_top_categories(self):
-        return Category.objects.filter(parent__isnull=True)
+    @staticmethod
+    def get_top_categories():
+        """Retrieve top-level categories with their subcategories prefetched."""
+        return Category.objects.filter(parent__isnull=True).prefetch_related("children")
 
 
 class CourseLevel(models.Model):
@@ -162,6 +163,7 @@ class Course(models.Model):
     class Meta:
         ordering = ["-publish"]
         indexes = [
+            models.Index(fields=["slug"]),
             models.Index(fields=["-publish"]),
         ]
 

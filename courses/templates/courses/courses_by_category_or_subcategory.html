@@ -10,7 +10,11 @@
     <p class="mb-lg-0">
       We found
       <span class="text-dark">
-        {{ course_count_by_category }} course{{ course_count_by_category|pluralize }}
+        {% if request_page == 'category' %}
+          {{ course_count_by_category }} course{{ course_count_by_category|pluralize }}
+        {% else %}
+          {{ course_count_by_subcategory }} course{{ course_count_by_subcategory|pluralize }}
+        {% endif %}
       </span>
       available for you
     </p>
